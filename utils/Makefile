@@ -1,0 +1,14 @@
+CFLAGS?=-O2 -g -Wall -W $(shell pkg-config --cflags librtlsdr)
+LDLIBS+=$(shell pkg-config --libs librtlsdr) -lpthread -lm
+CC?=g++
+
+all: get_1090_samples
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
+
+get_1090_samples: get_1090_samples.o
+	$(CC) -g -o get_1090_samples get_1090_samples.o $(LDFLAGS) $(LDLIBS)
+
+clean:
+	rm -f *.o get_1090_samples
