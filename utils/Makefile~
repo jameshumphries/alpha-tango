@@ -9,7 +9,7 @@ print-%  : ; @echo $* = $($*)
 all: get_1090_samples
 
 get_1090_samples: get_1090_samples.cpp
-	$(CC) -g -o get_1090_samples get_1090_samples.cpp $(CFLAGS)
+	$(CC) -g -o get_1090_samples get_1090_samples.cpp $(CFLAGS) $(LDLIBS)
 
 clean:
 	rm -f *.o get_1090_samples

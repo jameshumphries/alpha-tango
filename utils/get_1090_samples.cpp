@@ -34,6 +34,35 @@
 
 int main () {
 
-    printf("Testing compiler\n");
+    printf("\n");
+
+    int rtlsdr_num_devices;
+    char vendor[256], product[256], serial[256];
+    //int gains[100];
+
+    rtlsdr_num_devices = rtlsdr_get_device_count();
+    
+
+    if(!rtlsdr_num_devices) {
+        //If no devices connected, print an error
+        printf("Error: No Devices Found!\n");
+        
+    }
+    else {
+        //If devices connected, print how many and device information
+        printf("Found %d devices!\n", rtlsdr_num_devices);
+
+        //Print out device information
+        int j;
+        for (j=0; j < rtlsdr_num_devices; j++) {
+        
+        rtlsdr_get_device_usb_strings(j, vendor, product, serial);
+        printf("Device #%d: %s %s, SN: %s\n", j, vendor, product, serial);
+
+        }
+
+    }
+
+
 
     }
