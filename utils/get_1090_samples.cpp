@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <string.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -32,12 +33,31 @@
 #define SAMPLE_RATE     2000000         //2MHz Sample Rate
 #define FREQ            1090000000      //1090MHz Center Frequency
 
+//Radio structure
+struct {
+
+    int freq;
+    int samp_rate;
+    int device_index;
+    rtlsdr_dev_t *device;
+
+} radio;
+
+void radioConfig(void) {
+
+    radio.freq = FREQ;
+    radio.samp_rate = SAMPLE_RATE;
+    radio.device_index = 0; //Select first device if more than one
+
+}
+
 //Initialize RTL-SDR
 void initRTLSDR(void) {
 
     printf("\n");
 
     int rtlsdr_num_devices;
+    int rtlsdr_status;
     char vendor[256], product[256], serial[256];
     //int gains[100];
 
@@ -65,6 +85,16 @@ void initRTLSDR(void) {
 
     }
 
+    //Open the RTLSDR Device
+    rtlsdr_status = rtlsdr_open(&radio.device, radio.device_index);
+    printf("RTLSDR STATUS: %d\n\n", rtlsdr_status);
+
+    if(rtlsdr_status < 0) {
+        fprintf(stderr, "RTL-SDR Could Not be Opened: %s\n", strerror(errno));
+    }
+    
+    //Setup the RTLSDR Device
+
 }
 
 //Initialize USRP
@@ -73,7 +103,15 @@ void initUSRP(void) {
 
 int main () {
 
+    //Setup structure for some variables
+    
+
+    radioConfig();
+    
     initRTLSDR();
+
+    //Close the hardware
+    //rtlsdr_close();
     return 0;
 
     }
