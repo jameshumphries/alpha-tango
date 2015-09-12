@@ -32,6 +32,9 @@
 
 #define SAMPLE_RATE     2000000         //2MHz Sample Rate
 #define FREQ            1090000000      //1090MHz Center Frequency
+#define GAIN            999999          //Max gain for device
+#define PPM_ERROR       0               //Frequency error
+#define DEVICE_INDEX    0               //First device in list
 
 //Radio structure
 struct {
@@ -39,6 +42,8 @@ struct {
     int freq;
     int samp_rate;
     int device_index;
+    int gain;
+    int ppm_error;
     rtlsdr_dev_t *device;
 
 } radio;
@@ -47,7 +52,9 @@ void radioConfig(void) {
 
     radio.freq = FREQ;
     radio.samp_rate = SAMPLE_RATE;
-    radio.device_index = 0; //Select first device if more than one
+    radio.gain = GAIN;
+    radio.ppm_error = PPM_ERROR;
+    radio.device_index = DEVICE_INDEX; //Select first device if more than one
 
 }
 
@@ -90,11 +97,23 @@ void initRTLSDR(void) {
     printf("RTLSDR STATUS: %d\n\n", rtlsdr_status);
 
     if(rtlsdr_status < 0) {
-        fprintf(stderr, "RTL-SDR Could Not be Opened: %s\n", strerror(errno));
+        fprintf(stderr, "RTL-SDR Could Not be Opened: %s\n\n", strerror(errno));
+        exit(1);
     }
     
     //Setup the RTLSDR Device
-
+    rtlsdr_set_tuner_gain(radio.device, radio.gain);
+    rtlsdr_set_freq_correction(radio.device, radio.ppm_error);
+    rtlsdr_set_center_freq(radio.device, radio.freq);
+    rtlsdr_set_sample_rate(radio.device, radio.samp_rate);
+    rtlsdr_reset_buffer(radio.device);
+    
+    //Readback device settings
+    printf("\nRTLSDR Device Settings:\n--------------------------\n");
+    printf("Gain: %.2f\n", rtlsdr_get_tuner_gain(radio.device)/10.0);
+    printf("Center Frequency (MHz): %d\n", rtlsdr_get_center_freq(radio.device)/1000000);
+    printf("Sampling Rate (Hz): %d\n\n", rtlsdr_get_sample_rate(radio.device));
+    
 }
 
 //Initialize USRP
