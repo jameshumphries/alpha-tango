@@ -130,7 +130,8 @@ int main () {
     initRTLSDR();
 
     //Close the hardware
-    //rtlsdr_close();
+    rtlsdr_close(radio.device);
+
     return 0;
 
     }
