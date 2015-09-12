@@ -32,7 +32,8 @@
 #define SAMPLE_RATE     2000000         //2MHz Sample Rate
 #define FREQ            1090000000      //1090MHz Center Frequency
 
-int main () {
+//Initialize RTL-SDR
+void initRTLSDR(void) {
 
     printf("\n");
 
@@ -48,6 +49,7 @@ int main () {
         printf("Error: No Devices Found!\n");
         
     }
+
     else {
         //If devices connected, print how many and device information
         printf("Found %d devices!\n", rtlsdr_num_devices);
@@ -57,12 +59,21 @@ int main () {
         for (j=0; j < rtlsdr_num_devices; j++) {
         
         rtlsdr_get_device_usb_strings(j, vendor, product, serial);
-        printf("Device #%d: %s %s, SN: %s\n", j, vendor, product, serial);
+        printf("Device #%d: %s %s, SN: %s\n\n", j, vendor, product, serial);
 
         }
 
     }
 
+}
 
+//Initialize USRP
+void initUSRP(void) {
+    }
+
+int main () {
+
+    initRTLSDR();
+    return 0;
 
     }
